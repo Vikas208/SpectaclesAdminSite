@@ -1,0 +1,22 @@
+.navbarItems {
+  /* border: 1px solid black; */
+  margin: 10px 0px;
+  padding: 10px 0px;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 300ms ease-in;
+  display: flex;
+  align-items: center;
+}
+.sidebar {
+  overflow: auto;
+  width: 200px;
+  height: inherit;
+}
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+.navbarItems:hover {
+  color: white;
+  background-color: rgba(68, 68, 70, 0.342);
+}
