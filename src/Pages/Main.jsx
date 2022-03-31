@@ -1,14 +1,21 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import NavBar from "../Components/NavBar";
 import SideBar from "../Components/SideBar";
 
+import "../App.css";
+import Navbar from "../Components/Navbar";
 function Main() {
   return (
-    <div style={{ height: "100vh" }}>
-      {/* <NavBar /> */}
+    <div style={{ height: "100vh", display: "flex" }}>
       <SideBar />
-      <Outlet />
+      <div
+        className="m-2"
+        id="main"
+        style={{ flex: "auto", height: "inherit", overflow: "auto" }}
+      >
+        <Navbar />
+        <Outlet />
+      </div>
     </div>
   );
 }

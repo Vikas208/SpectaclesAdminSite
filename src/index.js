@@ -4,12 +4,17 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router } from "react-router-dom";
+import { DataLayer } from "./DataLayer";
+import { initialState } from "./Reducer/initialState";
+import reducer from "./Reducer/reducer";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <DataLayer initialState={initialState} reducer={reducer}>
+      <Router>
+        <App />
+      </Router>
+    </DataLayer>
   </React.StrictMode>,
   document.getElementById("root")
 );

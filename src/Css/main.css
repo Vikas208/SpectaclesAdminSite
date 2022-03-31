@@ -1,0 +1,10 @@
+@media (max-width: 800px) {
+  ._card {
+    width: 100% !important;
+  }
+}
+@media (max-width: 600px) {
+  #description {
+    display: none;
+  }
+}
