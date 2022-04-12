@@ -14,6 +14,14 @@ import DashBoard from "./Pages/DashBoard/DashBoard";
 import { getData, loadShopDetails } from "./API/LoadData";
 import Product from "./Pages/Product/Product";
 import ShopDetails from "./Pages/shopDetails/ShopDetails";
+import Users from "./Pages/Users/Users";
+import Order, {
+  CanceledOrders,
+  DeliveredOrders,
+  PlacedOrders,
+  ShippedOrders,
+} from "./Pages/Orders/Order";
+import Review from "./Pages/Reviews/Review";
 
 function App() {
   const [{ token, reloadDetails }, dispatch] = useDataLayerValue();
@@ -61,7 +69,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (token || reloadDetails) {
+    console.log("reload");
+    if (token) {
       loadShopdetails();
     }
   }, [token, reloadDetails]);
@@ -76,6 +85,36 @@ function App() {
           {token && <Route path="/account" element={<Account />}></Route>}
           {token && <Route path="/dashboard" element={<DashBoard />}></Route>}
           {token && <Route path="/products" element={<Product />}></Route>}
+          {token && <Route path="/product/:id" element={<Review />}></Route>}
+          {token && <Route path="/users" element={<Users />}></Route>}
+          {token && (
+            <Route path="/orders" element={<Order />}>
+              {token && (
+                <Route
+                  path="/orders/placedOrders"
+                  element={<PlacedOrders />}
+                ></Route>
+              )}
+              {token && (
+                <Route
+                  path="/orders/shippedOrders"
+                  element={<ShippedOrders />}
+                ></Route>
+              )}
+              {token && (
+                <Route
+                  path="/orders/deliveredOrders"
+                  element={<DeliveredOrders />}
+                ></Route>
+              )}
+              {token && (
+                <Route
+                  path="/orders/canceledOrders"
+                  element={<CanceledOrders />}
+                ></Route>
+              )}
+            </Route>
+          )}
           {token && (
             <Route path="/shopDetails" element={<ShopDetails />}></Route>
           )}

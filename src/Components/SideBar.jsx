@@ -54,11 +54,18 @@ function SideBar() {
             <span>Shop Details</span>
           </Link>
           <Link
-            to="/"
+            to="/users"
             className="nav-item nav-link d-flex align-items-center justify-content-left"
           >
             <i className="fa fa-users me-2"></i>
             <span>Users</span>
+          </Link>
+          <Link
+            to="/orders"
+            className="nav-item nav-link d-flex align-items-center justify-content-left"
+          >
+            <i className="fa fa-th me-2"></i>
+            <span>Orders</span>
           </Link>
           <Link
             to="/account"

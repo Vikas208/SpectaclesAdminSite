@@ -10,7 +10,7 @@ export const login = async (data) => {
   return response;
 };
 export const logoutAccount = async () => {
-  let response = await fetch("/api/user/logout", {
+  let response = await fetch("/api/user/logout?admin=true", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

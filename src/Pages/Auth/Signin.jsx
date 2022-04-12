@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../../API/Authentication";
@@ -7,11 +7,12 @@ import { action } from "../../Reducer/action";
 function Signin() {
   const [, dispatch] = useDataLayerValue();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const loginUser = async (e) => {
     e.preventDefault();
     let formdata = new FormData(e.target);
     let data = {};
-
+    setLoading(true);
     for (let [key, value] of formdata) {
       data[key] = value;
     }
@@ -27,6 +28,7 @@ function Signin() {
         type: action.LOGINUSER,
         user: result?.userDetails,
       });
+
       navigate("/");
     } else if (response.status === 401) {
       let result = await response.json();
@@ -35,9 +37,23 @@ function Signin() {
     } else {
       toast.error("Something is wrong");
     }
+    setLoading(false);
   };
+  useEffect(()=>{
+	  return()=>{
+		  setLoading(false);
+	  }
+  },[])
   return (
     <div className="container-fluid">
+      {loading && (
+        <div
+          className="spinner-border text-dark justify-content-center"
+          role="status"
+        >
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
       <div
         className="row h-100 align-items-center justify-content-center"
         style={{ minHeight: "100vh" }}

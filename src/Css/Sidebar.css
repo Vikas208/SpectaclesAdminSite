@@ -183,7 +183,7 @@
 
 @media (max-width: 950px) {
   .sidebar {
-    width: 70px;
+    width:100px;
     color: transparent;
   }
   .sidebar-toggler {

@@ -1,10 +1,27 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useDataLayerValue } from "../DataLayer";
 import { logout } from "./SideBar";
+import {loadNotifications} from "../API/LoadData";
 
 function Navbar() {
   const [{ user }] = useDataLayerValue();
+  const [notifications,setNotifications] = useState({});
+  
+  useEffect(()=>{
+	async function getNotification(){
+		let response = await loadNotifications();
+		if(response.status===200){
+			let result = await response.json();
+			
+			setNotifications(result);
+		}
+	}
+	getNotification();
+	return () =>{
+		setNotifications({});
+	}
+  },[]);
   return (
     <nav
       className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0"
@@ -21,33 +38,35 @@ function Navbar() {
       </span>
       <div className="navbar-nav align-items-center ms-auto">
         <div className="nav-item dropdown">
-          <a
-            href="/"
+          <span
+
             className="nav-link dropdown-toggle"
             data-bs-toggle="dropdown"
           >
             <i className="fa fa-bell me-lg-2"></i>
             <span className="d-none d-lg-inline-flex">Notification</span>
-          </a>
+          </span>
           <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-            <a href="/" className="dropdown-item">
-              <h6 className="fw-normal mb-0">Profile updated</h6>
-              <small>15 minutes ago</small>
-            </a>
+		  {
+			Object.keys(notifications)?.map((element,index)=>{
+				
+				return (
+				<div key={index}>
+				{notifications[element]!==0 &&
+				<>
+				<span className="dropdown-item">
+				
+              <h6 className="fw-normal mb-0">{notifications[element]} New {element}</h6>
+			
+            </span>
             <hr className="dropdown-divider" />
-            <a href="/" className="dropdown-item">
-              <h6 className="fw-normal mb-0">New user added</h6>
-              <small>15 minutes ago</small>
-            </a>
-            <hr className="dropdown-divider" />
-            <a href="/" className="dropdown-item">
-              <h6 className="fw-normal mb-0">Password changed</h6>
-              <small>15 minutes ago</small>
-            </a>
-            <hr className="dropdown-divider" />
-            <a href="/" className="dropdown-item text-center">
-              See all notifications
-            </a>
+			</>
+			}
+			</div>
+			);
+			}) 
+		  }
+          
           </div>
         </div>
         <div className="nav-item dropdown">

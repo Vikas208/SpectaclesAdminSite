@@ -20,7 +20,7 @@ function DashBoard() {
       });
     }
   };
-  console.log(ChartDetails);
+  //console.log(ChartDetails);
   useLayoutEffect(() => {
     loadData();
     return () => {
@@ -29,8 +29,8 @@ function DashBoard() {
   }, []);
   return (
     <div>
-      <div className="container-fluid pt-4 px-4 d-flex justify-content-center mt-4">
-        <div className="row g-4">
+      <div className="container pt-4 px-4 d-flex justify-content-center mt-4">
+        <div className="row ">
           <Card
             Imageclass={"	fa fa-line-chart"}
             name={"Total Product Sales"}
@@ -43,18 +43,39 @@ function DashBoard() {
           />
           <Card
             Imageclass={"fa fa-bar-chart"}
-            name={"Total Orders"}
-            data={basicDetails?.totalOrders}
+            name={"Total Placed Orders"}
+            data={basicDetails?.totalPlacedOrders}
+          />
+
+          <Card
+            Imageclass={"fa fa-bar-chart"}
+            name={"Total Shipped Orders"}
+            data={basicDetails?.totalShippedOrders}
+          />
+          <Card
+            Imageclass={"fa fa-bar-chart"}
+            name={"Total Delivered Orders"}
+            data={basicDetails?.totalDeliveredOrders}
+          />
+          <Card
+            Imageclass={"fa fa-bar-chart"}
+            name={"Total Canceled Orders"}
+            data={basicDetails?.totalCanceledOrders}
           />
           <Card
             Imageclass={"	fa fa-th"}
             name={"Total Products"}
             data={basicDetails?.totalProducts}
           />
+
           <Card
             Imageclass={"	fa fa-area-chart"}
             name={"Total Revenue"}
-            data={"₹ " + basicDetails?.totalRevenue}
+            data={
+              "₹ " + basicDetails?.totalRevenue === null
+                ? basicDetails?.totalRevenue
+                : 0
+            }
           />
         </div>
       </div>

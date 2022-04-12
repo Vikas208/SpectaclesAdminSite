@@ -445,6 +445,7 @@ function ProductCard({ productId }) {
               Carousel?.map((element, index) => {
                 return (
                   <div
+                    key={index}
                     style={{
                       boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
                       display: "flex",

@@ -4,7 +4,7 @@ function Card({ Imageclass, name, data }) {
   return (
     <div
       className="col-sm-6 col-xl-3 m-1 _card"
-      style={{ userSelect: "none", width: "fit-content" }}
+      style={{ userSelect: "none", width: "330px" }}
     >
       <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
         <i

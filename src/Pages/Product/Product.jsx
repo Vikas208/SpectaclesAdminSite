@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   countProduct,
   deleteProduct,
@@ -17,6 +18,7 @@ function Product() {
   const [p_id, setProductId] = useState(null);
   const [hide, setHide] = useState(true);
   const [addProduct, setAddProduct] = useState(false);
+  const navigation = useNavigate();
 
   document.addEventListener("mouseup", (e) => {
     let box = document.getElementById("productForm");
@@ -133,6 +135,9 @@ function Product() {
                       cursor: "pointer",
                       verticalAlign: "middle",
                       textAlign: "center",
+                    }}
+                    onClick={() => {
+                      navigation(`/product/${element?.id}`);
                     }}
                   >
                     <th scope="row">{index}</th>

@@ -10,6 +10,18 @@ export const updateShopDetails = async (data) => {
   return response;
 };
 
+export const updateShopContactDetails = async (data, param) => {
+  let response = await fetch(`/api/updateShopContactDetails?contact=${param}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
 export const updateGlassDetails = async (data) => {
   let response = await fetch(`/api/updateGlassDetails`, {
     headers: {
@@ -96,6 +108,63 @@ export const addCarouselDetails = async (data) => {
       "Content-Type": "application/json",
     },
     method: "POST",
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const getCarousel = async () => {
+  let response = await fetch(`/api/load/carousel`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  });
+  return response;
+};
+
+export const getServiceDetails = async () => {
+  let response = fetch("/api/getServiceDetails", {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  });
+  return response;
+};
+
+export const deleteServiceDetails = async (id) => {
+  let response = fetch(`/api/deleteServiceDetails?id=${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+  });
+  return response;
+};
+
+export const addServiceDetails = async (data) => {
+  let response = fetch(`/api/addServiceDetails`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const updateServiceDetails = async (data) => {
+  let response = fetch(`/api/updateServiceDetails`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PUT",
     body: JSON.stringify(data),
   });
   return response;
