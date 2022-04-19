@@ -16,7 +16,13 @@ import {
   addServiceDetails,
   deleteServiceDetails,
   updateServiceDetails,
+  getTaxDetails,
+  deleteTaxDetails,
+  addTaxDetails,
+  updateTaxDetails,
+  addCarouselDetails,
 } from "../../API/shopDetails";
+import { uploadCarousel, uploadLogo } from "../../API/Upload";
 import { useDataLayerValue } from "../../DataLayer";
 import { action } from "../../Reducer/action";
 
@@ -61,6 +67,11 @@ function ShopDetails() {
           <Service />
         </div>
       </div>
+      <div className="row">
+        <div className="col-sm">
+          <TaxData />
+        </div>
+      </div>
     </div>
   );
 }
@@ -71,6 +82,28 @@ function ShopData() {
   const [mailId, setMailId] = useState();
   const [{ shopDetails, reloadDetails }, dispatch] = useDataLayerValue();
   const [loading, setLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
+
+  const uploadLogoImage = async (e) => {
+    e.preventDefault();
+    // Upload Image On Cloudinary and get the url
+    let logo = document.getElementsByName("logoUrl")[0].files[0];
+    console.log(logo);
+    const form = new FormData();
+    form.append("file", logo);
+    setUploadLoading(true);
+    let resp = await uploadLogo(form);
+    if (resp.status === 200) {
+      let result = await resp.json();
+      console.log(result);
+      setLogoUrl(result?.url);
+    } else {
+      toast.error("Image Uploadation failed");
+    }
+    setUploadLoading(false);
+  };
+
   function getJsonFormateData(name) {
     let length = document.getElementsByName(name).length;
     let inputTag = document.getElementsByName(name);
@@ -113,9 +146,7 @@ function ShopData() {
     data["mailId"] = JSON.stringify(getJsonFormateData("mailId"));
 
     // Upload Image Here
-    data["logoUrl"] =
-      "https://res.cloudinary.com/dyg4mksoz/image/upload/v1643353999/ShopDetails/Logo-removebg-preview_jmpsu6.png";
-
+    data["logoUrl"] = logoUrl !== null ? logoUrl : shopDetails?.logoUrl;
     let address = {
       address: data["address"],
       city: data["city"],
@@ -195,6 +226,8 @@ function ShopData() {
       setPhoneNumber([]);
       setMailId([]);
       setLoading(false);
+      setLogoUrl(null);
+      setUploadLoading(false);
     };
   }, [shopDetails]);
   return (
@@ -393,17 +426,44 @@ function ShopData() {
             mail
           </span>
         </div>
-        <div className="input-group mb-2 mr-sm-2">
-          <div className="input-group">
-            <input
-              className="form-control"
-              aria-label="File"
-              type="file"
-              placeholder="Choose File"
-              name="logoUrl"
-            />
+        <div className="input-group mb-2 mr-sm-2 " style={{ height: "39px" }}>
+          <img
+            src={shopDetails?.logoUrl}
+            alt=""
+            style={{
+              width: "50px",
+              height: "inherit",
+              objectFit: "contain",
+              border: "1px solid #e0e0e0",
+              borderRight: "none",
+            }}
+          />
+
+          <div className="input-group-prepend">
+            <div className="input-group-text">Logo Image</div>
           </div>
+          <input
+            type="file"
+            accept=".png,.jpg,.jpeg"
+            className="form-control"
+            name="logoUrl"
+          />
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ height: "inherit" }}
+            onClick={uploadLogoImage}
+          >
+            upload Image
+          </button>
         </div>
+        {uploadLoading && (
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        )}
+
         <button
           type="submit"
           className="btn mb-3 w-100"
@@ -417,18 +477,47 @@ function ShopData() {
 }
 function Carousel() {
   const [carousel, setCarousel] = useState([]);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
-  useEffect(() => {
-    const getcarousel = async () => {
-      let response = await getCarousel();
-      if (response.status === 200) {
-        let result = await response.json();
-        setCarousel(result);
+  const UploadImage = async (e) => {
+    e.preventDefault();
+    setUploadLoading(true);
+    let formData = new FormData(e.target);
+    let response = await uploadCarousel(formData);
+    if (response.status === 200) {
+      let result = await response.json();
+      console.log(result);
+      let arr = [];
+
+      for (let i = 0; i < result?.length; i++) {
+        arr.push({ images: result[i] });
       }
-    };
+      console.log(arr);
+      let resp = await addCarouselDetails(arr);
+      if (resp.status !== 200) {
+        toast.error("Something went Wrong");
+      } else {
+        toast.success("Carousel Saved");
+        getcarousel();
+      }
+    } else {
+      toast.error("Something went wrong");
+    }
+    setUploadLoading(false);
+  };
+
+  const getcarousel = async () => {
+    let response = await getCarousel();
+    if (response.status === 200) {
+      let result = await response.json();
+      setCarousel(result);
+    }
+  };
+  useEffect(() => {
     getcarousel();
     return () => {
       setCarousel([]);
+      setUploadLoading(false);
     };
   }, []);
   return (
@@ -465,7 +554,16 @@ function Carousel() {
                 className="material-icons"
                 style={{ fontSize: "16px" }}
                 onClick={async () => {
-                  let response = await deleteCarouselImage(element?.id);
+                  let arr = String(element?.images)?.split("/");
+                  let filepath = arr[arr.length - 1];
+                  let check = filepath.split(".");
+
+                  if (check.length > 2) {
+                    filepath = check[0] + "." + check[1];
+                  }
+                  let path = arr[arr.length - 2] + "/" + filepath;
+                  console.log(path);
+                  let response = await deleteCarouselImage(element?.id, path);
                   if (response.status === 200) {
                     let data = carousel?.filter((ele, i) => {
                       return i !== index;
@@ -479,7 +577,12 @@ function Carousel() {
             </div>
           );
         })}
-      <form>
+      {uploadLoading && (
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
+      <form onSubmit={UploadImage}>
         <div className="input-group mb-2 mr-sm-2">
           <div className="input-group-prepend">
             <div className="input-group-text">Add Carousel</div>
@@ -490,6 +593,7 @@ function Carousel() {
             className="form-control"
             multiple
             required
+            name="file"
           />
         </div>
         <button
@@ -904,7 +1008,7 @@ function Service() {
                 />
                 <input
                   className="form-control"
-                  type="text"
+                  type="tel"
                   placeholder="PhoneNumber"
                   name="phonenumber"
                   pattern="[789][0-9]{9}"
@@ -951,6 +1055,193 @@ function Service() {
                 placeholder="PhoneNumber"
                 name="phonenumber"
                 pattern="[789][0-9]{9}"
+                required
+              />
+            </div>
+          </div>
+        </form>
+      )}
+    </fieldset>
+  );
+}
+function TaxData() {
+  const [taxData, setTaxData] = useState([]);
+  const [hide, setHide] = useState(true);
+  const [{ data }] = useDataLayerValue();
+
+  const addTaxData = async (e) => {
+    e.preventDefault();
+    let formdata = new FormData(e.target);
+    let data = {};
+    for (let [key, value] of formdata) {
+      data[key] = value;
+    }
+    let response = await addTaxDetails(data);
+    if (response.status !== 200) {
+      toast.error("Something went wrong");
+    } else {
+      getTaxData();
+      setHide(true);
+    }
+  };
+  async function getTaxData() {
+    let response = await getTaxDetails();
+    if (response.status === 200) {
+      let result = await response.json();
+      setTaxData(result);
+    }
+  }
+  useEffect(() => {
+    getTaxData();
+    return () => {
+      setHide(true);
+      setTaxData([]);
+    };
+  }, []);
+
+  return (
+    <fieldset className="mb-3">
+      <legend>Tax Details</legend>
+      {taxData &&
+        typeof taxData === "object" &&
+        taxData?.map((element, index) => {
+          return (
+            <div className="input-group mb-2 mr-sm-2" key={index}>
+              <div className="input-group">
+                <span className="input-group-text material-icons-outlined ">
+                  person
+                </span>
+
+                <span
+                  className="input-group-text material-icons-outlined "
+                  style={{ color: "red", cursor: "pointer" }}
+                  onClick={async () => {
+                    let response = await deleteTaxDetails(element?.id);
+                    if (response.status === 200) {
+                      let data = taxData?.filter((ele, index) => {
+                        return ele?.id !== element?.id;
+                      });
+                      setTaxData(data);
+                    } else {
+                      toast.info("Something went wrong");
+                    }
+                  }}
+                >
+                  close
+                </span>
+                <span
+                  className="input-group-text material-icons-outlined "
+                  style={{ color: "blue", cursor: "pointer" }}
+                  onClick={async () => {
+                    let data = {
+                      id: element?.id,
+                      categoryName:
+                        document.getElementsByName("_categoryName")[0].value,
+                      gst: document.getElementsByName("_gst")[0].value,
+                      otherTax:
+                        document.getElementsByName("_otherTax")[0].value,
+                    };
+                    let response = await updateTaxDetails(data);
+                    if (response.status !== 200) {
+                      toast.info("Something went wrong");
+                    }
+                  }}
+                >
+                  update
+                </span>
+                <select
+                  id="inputState"
+                  className="form-control"
+                  required
+                  name="_categoryName"
+                >
+                  <option value="">Choose...</option>
+                  {data?.categories?.map((ele, index) => {
+                    return (
+                      <option
+                        key={index}
+                        value={ele?.data}
+                        selected={
+                          String(element?.categoryName) === String(ele?.data)
+                        }
+                      >
+                        {ele?.data}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                <input
+                  className="form-control"
+                  type="Number"
+                  placeholder="gst"
+                  name="_gst"
+                  required
+                  defaultValue={element?.gst}
+                />
+                <input
+                  className="form-control"
+                  type="Number"
+                  placeholder="other tax"
+                  name="_otherTax"
+                  required
+                  defaultValue={element?.otherTax}
+                />
+              </div>
+            </div>
+          );
+        })}
+
+      <span
+        className="material-icons-outlined btn m-1 w-100"
+        style={{ backgroundColor: "#1a76fc", color: "white" }}
+        onClick={() => {
+          setHide((pre) => !pre);
+        }}
+      >
+        category
+      </span>
+      {!hide && (
+        <form onSubmit={addTaxData}>
+          <div className="input-group mb-2 mr-sm-2">
+            <div className="input-group">
+              <span className="input-group-text material-icons-outlined ">
+                category
+              </span>
+              <button className="btn" type="submit" style={{ padding: "0px" }}>
+                <span className="input-group-text material-icons-outlined  ">
+                  done
+                </span>
+              </button>
+
+              <select
+                id="inputState"
+                className="form-control"
+                required
+                name="categoryName"
+              >
+                <option value="">Choose...</option>
+                {data?.categories?.map((element, index) => {
+                  return (
+                    <option key={index} value={element?.data}>
+                      {element?.data}
+                    </option>
+                  );
+                })}
+              </select>
+
+              <input
+                className="form-control"
+                type="Number"
+                placeholder="gst"
+                name="gst"
+                required
+              />
+              <input
+                className="form-control"
+                type="Number"
+                placeholder="other tax"
+                name="otherTax"
                 required
               />
             </div>

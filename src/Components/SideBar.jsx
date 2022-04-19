@@ -4,16 +4,21 @@ import { toast } from "react-toastify";
 import { logoutAccount } from "../API/Authentication";
 import "../Css/Sidebar.css";
 import { useDataLayerValue } from "../DataLayer";
+import { action } from "../Reducer/action";
 
-export const logout = async () => {
-  let response = await logoutAccount();
-  if (response.status !== 200) {
-    toast.error("Something is wrong");
-  }
-};
 function SideBar() {
-  const [{ token, user, shopDetails }] = useDataLayerValue();
-
+  const [{ token, user, shopDetails }, dispatch] = useDataLayerValue();
+  const logout = async () => {
+    let response = await logoutAccount();
+    if (response.status !== 200) {
+      toast.error("Something is wrong");
+    } else {
+      dispatch({
+        type: action.SETTOKEN,
+        token: null,
+      });
+    }
+  };
   return (
     <div className="sidebar pe-4 pb-3 " id="_sidebar">
       <nav className="navbar bg-light navbar-light">

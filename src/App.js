@@ -69,7 +69,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("reload");
+    // console.log("reload");
     if (token) {
       loadShopdetails();
     }

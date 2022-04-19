@@ -42,13 +42,18 @@ function Review() {
     };
   }, [id]);
   return (
-    <div className="row">
+    <div className="row g-2">
+      {
+        reviews && typeof reviews === 'object' &&
+        reviews?.length===0 &&
+        <h3 className="mt-3 container">!! No Reviews Are There For This Product !!</h3>
+      }
       {reviews &&
         typeof reviews === "object" &&
         reviews?.map((element, index) => {
           return (
             <div
-              className="reviews col"
+
               key={index}
               style={{
                 display: "flex",

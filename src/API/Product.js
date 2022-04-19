@@ -77,14 +77,30 @@ export const saveProduct = async (data) => {
   return response;
 };
 
-export const deleteProductImage = async (id) => {
-  let response = await fetch(`/api/products/deleteProductImage?id=${id}`, {
+export const deleteProductImage = async (id, filepath) => {
+  let response = await fetch(
+    `/api/products/deleteProductImage?id=${id}&filePath=${filepath}`,
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+
+      method: "DELETE",
+    }
+  );
+  return response;
+};
+
+export const addProductCarousel = async (data) => {
+  let response = await fetch("/api/products/addProductCarousel", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
 
-    method: "DELETE",
+    method: "POST",
+    body: JSON.stringify(data),
   });
   return response;
 };

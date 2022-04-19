@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
   getAllCancelOrders,
@@ -64,7 +64,9 @@ function Order() {
 }
 export default Order;
 
-function ProductCard({ element }) {
+function ProductCard({ element, i }) {
+  const _table = useRef("");
+
   return (
     <div>
       <div className="d-flex flex-column p-3 m-1">
@@ -158,7 +160,15 @@ function ProductCard({ element }) {
                         margin: "2px",
                       }}
                       onClick={() => {
-                        let table = document.getElementById(index + "table");
+                        console.log(
+                          document.getElementById(
+                            String(i) + String(index) + "table"
+                          )
+                        );
+                        console.log(i + " " + index);
+                        let table = document.getElementById(
+                          String(i) + String(index) + "table"
+                        );
                         if (table.style.display === "none") {
                           table.style.display = "block";
                         } else {
@@ -171,8 +181,8 @@ function ProductCard({ element }) {
 
                     <table
                       style={{ fontSize: "small", display: "none" }}
+                      id={String(i) + String(index) + "table"}
                       className="table table-striped mt-2 "
-                      id={index + "table"}
                     >
                       <tbody>
                         <tr>
@@ -340,7 +350,7 @@ export function CanceledOrders() {
                   "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
               }}
             >
-              <ProductCard element={element} />
+              <ProductCard element={element} i={index} />
               <div className="d-flex">
                 <button
                   className="d-flex justify-content-center btn btn-danger m-2 w-100 "
@@ -525,7 +535,7 @@ export function OrdersCard({ orders }) {
                   "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
               }}
             >
-              <ProductCard element={element} />
+              <ProductCard element={element} i={index} />
               <div className="d-flex">
                 <button
                   className="d-flex justify-content-center btn btn-primary m-2 w-100 "
@@ -784,7 +794,7 @@ export function DeliveredOrders() {
                 background: "#f3f6f9",
               }}
             >
-              <ProductCard element={element} />
+              <ProductCard element={element} i={index} />
               <div className="d-flex">
                 <button
                   className="d-flex justify-content-center btn btn-danger m-2 w-100 "

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { uploadImage, uploadProductCarousel } from "../API/Upload";
 import {
+  addProductCarousel,
+  deleteProduct,
   deleteProductImage,
   updateProduct,
   updateProductSale,
@@ -13,33 +15,84 @@ function ProductCard({ productId }) {
   const [addsale, setAddsale] = useState(false);
   const [product, setProduct] = useState({});
   const [Carousel, setCarousel] = useState([]);
+  const [bannerImage, setBannerImage] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
+  useEffect(() => {
+    if (product) {
+      setBannerImage(product?.bannerImage);
+    }
+
+    return () => {
+      setBannerImage(null);
+      setUploadLoading(false);
+    };
+  }, []);
+  const uploadBannerImage = async (e) => {
+    e.preventDefault();
+    // Upload Image On Cloudinary and get the url
+    let bannerImage = document.getElementsByName("bannerImage")[0].files[0];
+    console.log(bannerImage);
+    const form = new FormData();
+
+    form.append("file", bannerImage);
+
+    setUploadLoading(true);
+    let resp = await uploadImage(product?.id, form);
+    if (resp.status === 200) {
+      let result = await resp.json();
+      console.log(result);
+      setBannerImage(result?.url);
+    } else {
+      toast.error("Image Uploadation failed");
+    }
+    setUploadLoading(false);
+  };
+  const uploadCarousel = async (e) => {
+    e.preventDefault();
+    setUploadLoading(true);
+    let carousel = document.getElementsByName("productCarousel")[0].files;
+
+    const formdata = new FormData();
+    for (let i = 0; i < carousel.length; ++i) {
+      formdata.append("file", carousel[i]);
+    }
+    console.log(formdata);
+
+    let response = await uploadProductCarousel(product?.id, formdata);
+    if (response.status === 200) {
+      let result = await response.json();
+
+      if (result) {
+        let arr = [];
+        for (let i = 0; i < result?.length; ++i) {
+          let data = {};
+          data["p_id"] = product?.id;
+          data["images"] = result[i];
+          arr.push(data);
+        }
+        console.log(arr);
+        let res = await addProductCarousel(arr);
+        if (res.status !== 200) {
+          toast.error("Something went wrong");
+        }
+      }
+    } else {
+      toast.error("File Uploading Error");
+    }
+    setUploadLoading(false);
+  };
   const handelSubmit = async (e) => {
     e.preventDefault();
     let formdata = new FormData(e.target);
     let data = {};
     for (let [key, value] of formdata) {
       data[key] = value;
+      // console.log(key + ": " + value);
     }
 
-    // Upload Image On Cloudinary and get the url
-    // let body = {
-    //   file: data["bannerImage"],
-    // };
-    // const response = await fetch("/api/cloud/upload", {
-    //   headers: {
-    //     Accept: "application/json",
-    //   },
-    //   method: "POST",
-    //   body: JSON.stringify(body),
-    // });
-
-    // if (response.status === 200) {
-    //   let result = await response.json();
-    //   console.log(result);
-    // }
     data["id"] = product?.id;
-    data["bannerImage"] = product?.bannerImage;
+    data["bannerImage"] = bannerImage ? bannerImage : product?.bannerImage;
 
     let productDescription = {
       p_description: data["p_description"],
@@ -417,6 +470,7 @@ function ProductCard({ productId }) {
               }
             />
           </div>
+
           <div className="input-group mb-2 mr-sm-2">
             <img
               src={product?.bannerImage}
@@ -429,6 +483,7 @@ function ProductCard({ productId }) {
                 borderRight: "none",
               }}
             />
+
             <div className="input-group-prepend ">
               <div className="input-group-text">Banner Image</div>
             </div>
@@ -438,7 +493,20 @@ function ProductCard({ productId }) {
               className="form-control"
               name="bannerImage"
             />
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={uploadBannerImage}
+            >
+              upload Image
+            </button>
           </div>
+          {uploadLoading && (
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          )}
           <div className="d-flex">
             {Carousel &&
               typeof Carousel === "object" &&
@@ -471,14 +539,24 @@ function ProductCard({ productId }) {
                       className="material-icons"
                       style={{ fontSize: "16px" }}
                       onClick={async () => {
-                        let response = await deleteProductImage(element?.id);
-                        if (response.status !== 200) {
-                          toast.error("Something is Wrong");
-                        } else {
-                          let images = Carousel?.filter((ele, i) => {
-                            return element?.id !== ele?.id;
+                        let arr = String(element?.images)?.split("/");
+                        let filepath = arr[arr.length - 1];
+                        let check = filepath.split(".");
+
+                        if (check.length > 2) {
+                          filepath = check[0] + "." + check[1];
+                        }
+                        let path = arr[arr.length - 2] + "/" + filepath;
+                        console.log(path);
+                        let response = await deleteProductImage(
+                          element?.id,
+                          path
+                        );
+                        if (response.status === 200) {
+                          let data = Carousel?.filter((ele, i) => {
+                            return i !== index;
                           });
-                          setCarousel(images);
+                          setCarousel(data);
                         }
                       }}
                     >
@@ -497,8 +575,16 @@ function ProductCard({ productId }) {
               accept=".png,.jpg,.jpeg"
               className="form-control"
               multiple
+              name="productCarousel"
             />
           </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={uploadCarousel}
+          >
+            Upload Carousel
+          </button>
         </fieldset>
 
         <div className="form-check" style={{ textAlign: "left" }}>

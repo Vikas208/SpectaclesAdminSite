@@ -1,11 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  countProduct,
-  deleteProduct,
-  getAllProduct,
-  getProduct,
-} from "../../API/Product";
+import { countProduct, deleteProduct, getAllProduct } from "../../API/Product";
 import ProductAddCard from "../../Components/ProductAddCard";
 import ProductCard from "../../Components/ProductCard";
 import "../../Css/main.css";
@@ -50,12 +45,15 @@ function Product() {
   };
 
   const _deleteProduct = async (p_id) => {
-    let response = await deleteProduct(p_id);
-    if (response.status === 200) {
-      let updatedProduct = products?.filter((element, index) => {
-        return element?.id !== p_id;
-      });
-      setProducts(updatedProduct);
+    let ans = window.confirm("Are You Sure");
+    if (ans) {
+      let response = await deleteProduct(p_id);
+      if (response.status === 200) {
+        let updatedProduct = products?.filter((element, index) => {
+          return element?.id !== p_id;
+        });
+        setProducts(updatedProduct);
+      }
     }
   };
 
@@ -139,6 +137,9 @@ function Product() {
                     onClick={() => {
                       navigation(`/product/${element?.id}`);
                     }}
+                    datatoggle="tooltip"
+                    dataplacement="top"
+                    title="Click For See Reviews"
                   >
                     <th scope="row">{index}</th>
                     <td>
@@ -171,7 +172,9 @@ function Product() {
                       <i
                         className="fa fa-edit"
                         style={{ fontSize: "20px", color: "blue" }}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.nativeEvent.stopImmediatePropagation();
                           setProductId(element?.id);
                           setHide(false);
                         }}
@@ -181,7 +184,9 @@ function Product() {
                       <i
                         className="fa fa-trash"
                         style={{ fontSize: "20px", color: "red" }}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.nativeEvent.stopImmediatePropagation();
                           _deleteProduct(element?.id);
                         }}
                       ></i>
@@ -194,7 +199,9 @@ function Product() {
                   <span
                     className="btn material-icons-outlined w-100"
                     style={{ background: "navy", color: "white" }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.nativeEvent.stopImmediatePropagation();
                       setAddProduct(true);
                     }}
                   >

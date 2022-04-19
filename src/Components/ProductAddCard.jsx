@@ -1,12 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { saveProduct } from "../API/Product";
+import { uploadImage } from "../API/Upload";
 import { useDataLayerValue } from "../DataLayer";
 
 function ProductAddCard() {
   const [{ data }] = useDataLayerValue();
+  const [bannerImage, setBannerImage] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      setBannerImage(null);
+      setUploadLoading(false);
+    };
+  }, []);
+
+  const uploadBannerImage = async (e) => {
+    e.preventDefault();
+    // Upload Image On Cloudinary and get the url
+    let bannerImage = document.getElementsByName("bannerImage")[0].files[0];
+    const form = new FormData();
+    form.append("file", bannerImage);
+
+    setUploadLoading(true);
+    let resp = await uploadImage(0, form);
+    if (resp.status === 200) {
+      let result = await resp.json();
+      console.log(result);
+      setBannerImage(result?.url);
+    } else {
+      toast.error("Image Uploadation failed");
+    }
+    setUploadLoading(false);
+  };
   const handelSubmit = async (e) => {
     e.preventDefault();
+
+    if (bannerImage == null) {
+      toast.info("Please Select Image");
+      return;
+    }
     let formData = new FormData(e.target);
 
     let data = {};
@@ -14,8 +48,7 @@ function ProductAddCard() {
       data[key] = value;
     }
     // Upload Image and get URL
-    data["bannerImage"] =
-      "https://res.cloudinary.com/dyg4mksoz/image/upload/v1643449429/Products_Images/4340_p4nh9q.webp";
+    data["bannerImage"] = bannerImage;
 
     let productDescription = {
       p_description: data["p_description"],
@@ -252,6 +285,11 @@ function ProductAddCard() {
               placeholder="Guaranty"
             />
           </div>
+          {uploadLoading && (
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          )}
           <div className="input-group mb-2 mr-sm-2">
             <div className="input-group-prepend ">
               <div className="input-group-text">Banner Image</div>
@@ -262,18 +300,13 @@ function ProductAddCard() {
               className="form-control"
               name="bannerImage"
             />
-          </div>
-
-          <div className="input-group mb-2 mr-sm-2">
-            <div className="input-group-prepend">
-              <div className="input-group-text">Product Carousel Images</div>
-            </div>
-            <input
-              type="file"
-              accept=".png,.jpg,.jpeg"
-              className="form-control"
-              multiple
-            />
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={uploadBannerImage}
+            >
+              upload Image
+            </button>
           </div>
         </fieldset>
         <button type="submit" className="btn btn-primary py-3 w-100 mb-4">
