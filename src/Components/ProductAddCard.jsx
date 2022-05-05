@@ -27,7 +27,7 @@ function ProductAddCard() {
     let resp = await uploadImage(0, form);
     if (resp.status === 200) {
       let result = await resp.json();
-      console.log(result);
+      //console.log(result);
       setBannerImage(result?.url);
     } else {
       toast.error("Image Uploadation failed");
@@ -74,7 +74,7 @@ function ProductAddCard() {
 
     data["productDescription"] = productDescription;
 
-    console.log(data);
+    //console.log(data);
 
     let response = await saveProduct(data);
     if (response.status === 200) {

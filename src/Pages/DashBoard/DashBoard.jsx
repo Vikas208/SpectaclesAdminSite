@@ -13,14 +13,14 @@ function DashBoard() {
     let response = await loadDashBoard();
     if (response.status === 200) {
       let result = await response.json();
-      // console.log(result);
+      // //console.log(result);
       setData({
         basicDetails: result?.basicData,
         ChartDetails: result?.chartData,
       });
     }
   };
-  //console.log(ChartDetails);
+  ////console.log(ChartDetails);
   useLayoutEffect(() => {
     loadData();
     return () => {

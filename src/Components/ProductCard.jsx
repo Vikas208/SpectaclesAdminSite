@@ -32,7 +32,7 @@ function ProductCard({ productId }) {
     e.preventDefault();
     // Upload Image On Cloudinary and get the url
     let bannerImage = document.getElementsByName("bannerImage")[0].files[0];
-    console.log(bannerImage);
+    //console.log(bannerImage);
     const form = new FormData();
 
     form.append("file", bannerImage);
@@ -41,7 +41,7 @@ function ProductCard({ productId }) {
     let resp = await uploadImage(product?.id, form);
     if (resp.status === 200) {
       let result = await resp.json();
-      console.log(result);
+      //console.log(result);
       setBannerImage(result?.url);
     } else {
       toast.error("Image Uploadation failed");
@@ -57,7 +57,7 @@ function ProductCard({ productId }) {
     for (let i = 0; i < carousel.length; ++i) {
       formdata.append("file", carousel[i]);
     }
-    console.log(formdata);
+    //console.log(formdata);
 
     let response = await uploadProductCarousel(product?.id, formdata);
     if (response.status === 200) {
@@ -71,7 +71,7 @@ function ProductCard({ productId }) {
           data["images"] = result[i];
           arr.push(data);
         }
-        console.log(arr);
+        //console.log(arr);
         let res = await addProductCarousel(arr);
         if (res.status !== 200) {
           toast.error("Something went wrong");
@@ -88,7 +88,7 @@ function ProductCard({ productId }) {
     let data = {};
     for (let [key, value] of formdata) {
       data[key] = value;
-      // console.log(key + ": " + value);
+      // //console.log(key + ": " + value);
     }
 
     data["id"] = product?.id;
@@ -547,7 +547,7 @@ function ProductCard({ productId }) {
                           filepath = check[0] + "." + check[1];
                         }
                         let path = arr[arr.length - 2] + "/" + filepath;
-                        console.log(path);
+                        //console.log(path);
                         let response = await deleteProductImage(
                           element?.id,
                           path

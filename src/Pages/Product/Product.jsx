@@ -39,7 +39,7 @@ function Product() {
     let response = await getAllProduct(limit, offset);
     if (response.status === 200) {
       let result = await response.json();
-      console.log(result);
+      //console.log(result);
       setProducts(result);
     }
   };

@@ -160,12 +160,12 @@ function ProductCard({ element, i }) {
                         margin: "2px",
                       }}
                       onClick={() => {
-                        console.log(
-                          document.getElementById(
-                            String(i) + String(index) + "table"
-                          )
-                        );
-                        console.log(i + " " + index);
+                        // console.log(
+                        //   document.getElementById(
+                        //     String(i) + String(index) + "table"
+                        //   )
+                        // );
+                        // console.log(i + " " + index);
                         let table = document.getElementById(
                           String(i) + String(index) + "table"
                         );
@@ -284,7 +284,7 @@ export function CanceledOrders() {
     let ans = window.confirm(
       "Are You Sure? It will also delete the Record of that Order"
     );
-    console.log(ans);
+    // console.log(ans);
     if (ans) {
       let response = await deleteOrder(id);
       if (response.status === 200) {
@@ -447,7 +447,7 @@ export function OrdersCard({ orders }) {
         return;
       }
     }
-    console.log(data);
+    // console.log(data);
 
     let response = await UpdateOrderDetails(data);
     if (response.status === 200) {
@@ -460,7 +460,7 @@ export function OrdersCard({ orders }) {
     let reason = window.prompt(
       "Enter Any Reason for Cancel Order.[This reason send to the User]"
     );
-    console.log(reason);
+    // console.log(reason);
     let ans = window.confirm("Are You Sure?");
     if (ans) {
       let response = await cancelOrder(id);
@@ -554,7 +554,7 @@ export function OrdersCard({ orders }) {
                   className="d-flex justify-content-center btn btn-danger m-2 w-100 "
                   style={{ borderRadius: "50px" }}
                   onClick={() => {
-                    console.log(element);
+                    // console.log(element);
 
                     CancelOrder(element?.order_id);
                   }}
@@ -677,7 +677,9 @@ export function OrdersCard({ orders }) {
                 </select>
               </div>
             )}
-          <button className="btn btn-primary w-100">Proceed</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Proceed
+          </button>
         </form>
       )}
     </div>

@@ -13,7 +13,7 @@ function Account() {
     for (let [key, value] of formdata) {
       data[key] = value;
     }
-    console.log(data);
+    //console.log(data);
     let response = await changeUserName(data);
     if (response.status === 200) {
       let result = await response.json();
@@ -32,7 +32,7 @@ function Account() {
       data[key] = value;
     }
 
-    console.log(data);
+    //console.log(data);
     if (String(data["newPassword"]) !== String(data["ConfirmPassword"])) {
       document.getElementById("accountError").innerText =
         "Confirm Password not matched";

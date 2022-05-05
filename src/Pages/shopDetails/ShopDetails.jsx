@@ -89,14 +89,14 @@ function ShopData() {
     e.preventDefault();
     // Upload Image On Cloudinary and get the url
     let logo = document.getElementsByName("logoUrl")[0].files[0];
-    console.log(logo);
+    //console.log(logo);
     const form = new FormData();
     form.append("file", logo);
     setUploadLoading(true);
     let resp = await uploadLogo(form);
     if (resp.status === 200) {
       let result = await resp.json();
-      console.log(result);
+      //console.log(result);
       setLogoUrl(result?.url);
     } else {
       toast.error("Image Uploadation failed");
@@ -121,7 +121,7 @@ function ShopData() {
       return i !== index;
     });
     contactData[key] = JSON.stringify(data);
-    console.log(contactData);
+    //console.log(contactData);
     let response = await updateShopContactDetails(contactData, param);
     if (response.status === 200) {
       if (String(key).toLowerCase === String("mailId").toLowerCase) {
@@ -159,7 +159,7 @@ function ShopData() {
     delete data["pinCode"];
 
     data["address"] = address;
-    console.log(data);
+    //console.log(data);
     let response = await updateShopDetails(data);
     if (response.status === 200) {
       toast.success("Data Updated");
@@ -486,13 +486,13 @@ function Carousel() {
     let response = await uploadCarousel(formData);
     if (response.status === 200) {
       let result = await response.json();
-      console.log(result);
+      //console.log(result);
       let arr = [];
 
       for (let i = 0; i < result?.length; i++) {
         arr.push({ images: result[i] });
       }
-      console.log(arr);
+      //console.log(arr);
       let resp = await addCarouselDetails(arr);
       if (resp.status !== 200) {
         toast.error("Something went Wrong");
@@ -562,7 +562,7 @@ function Carousel() {
                     filepath = check[0] + "." + check[1];
                   }
                   let path = arr[arr.length - 2] + "/" + filepath;
-                  console.log(path);
+                  //console.log(path);
                   let response = await deleteCarouselImage(element?.id, path);
                   if (response.status === 200) {
                     let data = carousel?.filter((ele, i) => {
@@ -617,7 +617,7 @@ function DataCard({ data, type, title }) {
     let data = {
       data: document.getElementsByName("newdata")[0].value,
     };
-    console.log(data);
+    //console.log(data);
     let response = await addData(data, type);
     if (response.status === 200) {
       dispatch({
@@ -658,7 +658,7 @@ function DataCard({ data, type, title }) {
                     }
                     if (response.status === 403) {
                       let result = await response.json();
-                      console.log(result);
+                      //console.log(result);
                       toast.info(result?.message);
                     }
                   }}
@@ -673,9 +673,9 @@ function DataCard({ data, type, title }) {
                       data: document.getElementsByName(type)[index].value,
                       id: element?.id,
                     };
-                    console.log(data);
+                    //console.log(data);
                     let response = await updateData(data, type);
-                    console.log(response);
+                    //console.log(response);
                     if (response.status === 200) {
                       toast.success("Done");
                       dispatch({
@@ -914,7 +914,7 @@ function Service() {
     for (let [key, value] of formdata) {
       data[key] = value;
     }
-    console.log(data);
+    //console.log(data);
     let response = await addServiceDetails(data);
     if (response.status === 200) {
       toast.success("Data Inserted");

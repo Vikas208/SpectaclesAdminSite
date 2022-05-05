@@ -22,6 +22,7 @@ import Order, {
   ShippedOrders,
 } from "./Pages/Orders/Order";
 import Review from "./Pages/Reviews/Review";
+import Notfound from "./Pages/NotFound/Notfound";
 
 function App() {
   const [{ token, reloadDetails }, dispatch] = useDataLayerValue();
@@ -118,10 +119,9 @@ function App() {
           {token && (
             <Route path="/shopDetails" element={<ShopDetails />}></Route>
           )}
+          <Route path="*" element={token ? <Notfound /> : <Signin />}></Route>
         </Route>
-        )
       </Routes>
-
       <ToastContainer
         theme="colored"
         autoClose={5000}

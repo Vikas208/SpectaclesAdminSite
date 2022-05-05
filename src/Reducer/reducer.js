@@ -1,8 +1,8 @@
 import { action } from "./action";
 
 const reducer = (state, actionParam) => {
-  console.log(state);
-  console.log(actionParam);
+  // console.log(state);
+  // console.log(actionParam);
   switch (actionParam.type) {
     case action.LOGINUSER:
       return {
